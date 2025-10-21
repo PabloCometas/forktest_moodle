@@ -1,0 +1,31 @@
+name: Build Moodle Bundle (with dynamic_cohorts)
+on:
+  workflow_dispatch:  # manuell startbar
+
+permissions:
+  contents: write     # damit der Push klappt
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Moodle Fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout dynamic_cohorts plugin
+        uses: actions/checkout@v4
+        with:
+          repository: catalyst/moodle-tool_dynamic_cohorts
+          path: admin/tool/dynamic_cohorts
+          # optional: ref: master | main  (nur setzen, wenn nötig)
+
+      - name: Commit & Push to bundle branch
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git checkout -B bundle
+          git add -A
+          git commit -m "Add/Update tool_dynamic_cohorts" || echo "nichts zu committen"
+          git push -f origin bundle
