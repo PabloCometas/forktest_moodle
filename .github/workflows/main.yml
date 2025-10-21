@@ -1,9 +1,9 @@
 name: Build Moodle Bundle (with plugins)
 on:
-  workflow_dispatch:  # manuell startbar
+  workflow_dispatch:
 
 permissions:
-  contents: write     # damit Push auf bundle klappt
+  contents: write
 
 jobs:
   bundle:
@@ -14,19 +14,24 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Add Plugin 1 - tool_dynamic_cohorts
+      - name: Add Plugin - tool_dynamic_cohorts
         uses: actions/checkout@v4
         with:
           repository: catalyst/moodle-tool_dynamic_cohorts
+          # Wähle den Branch passend zu deiner Moodle-Version:
+          # ref: MOODLE_404_STABLE
           path: admin/tool/dynamic_cohorts
-          # ref: master  # optional, falls Branch nicht "main" heisst
+      - name: De-git tool_dynamic_cohorts
+        run: rm -rf admin/tool/dynamic_cohorts/.git
 
-      - name: Add Plugin 2 - mod_facetoface
+      - name: Add Plugin - mod_facetoface
         uses: actions/checkout@v4
         with:
           repository: catalyst/moodle-mod_facetoface
+          # ggf. ref: master (falls kein main)
           path: mod/facetoface
-          # ref: master  # optional, falls Branch nicht "main" heisst
+      - name: De-git mod_facetoface
+        run: rm -rf mod/facetoface/.git
 
       - name: Commit & Push to bundle branch
         run: |
@@ -34,5 +39,5 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git checkout -B bundle
           git add -A
-          git commit -m "Update bundle with tool_dynamic_cohorts and mod_facetoface" || echo "nichts zu committen"
+          git commit -m "Bundle: add/update dynamic_cohorts + facetoface" || echo "nichts zu committen"
           git push -f origin bundle
