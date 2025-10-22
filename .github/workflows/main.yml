@@ -1,33 +1,25 @@
-name: Build Moodle Bundle (with plugins - 4.5)
+name: Build Moodle Bundle (with plugins)
 on:
   workflow_dispatch:
-  # optional automatisch (täglich 05:15 CH-Zeit Sommer / 04:15 Winter):
-  # schedule:
-  #   - cron: "15 3 * * *"
 
 permissions:
   contents: write
-
-env:
-  BASE_BRANCH: MOODLE_405_STABLE   # Moodle 4.5 Basis
-  BUNDLE_BRANCH: bundle
 
 jobs:
   bundle:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Moodle Fork (4.5)
+      - name: Checkout Moodle Fork
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ env.BASE_BRANCH }}
+          # optional: ref: main   # Basis-Branch
 
-      - name: Add Plugin - tool_dynamic_cohorts (4.5)
+      - name: Add Plugin - tool_dynamic_cohorts
         uses: actions/checkout@v4
         with:
           repository: catalyst/moodle-tool_dynamic_cohorts
-          # Falls vorhanden, auf 4.5 pinnen:
-          ref: MOODLE_405_STABLE
+          # ref: MOODLE_404_STABLE   # passend zu deiner Moodle-Version
           path: ./admin/tool/dynamic_cohorts
       - name: De-git tool_dynamic_cohorts
         run: rm -rf ./admin/tool/dynamic_cohorts/.git
@@ -36,10 +28,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: catalyst/moodle-mod_facetoface
-          # Viele Plugins nutzen "master" oder "main". Falls ein 405-Branch existiert:
-          # ref: MOODLE_405_STABLE
-          # sonst eine stabile Branch/Tag wählen (z. B. master)
-          ref: master
+          # ref: master  # falls kein main existiert
           path: ./mod/facetoface
       - name: De-git mod_facetoface
         run: rm -rf ./mod/facetoface/.git
@@ -53,7 +42,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@users.noreply.github.com"
-          git checkout -B "${BUNDLE_BRANCH}"
+          git checkout -B bundle
           git add -A
-          git commit -m "Bundle (Moodle 4.5): dynamic_cohorts + facetoface" || echo "nichts zu committen"
-          git push -f origin "${BUNDLE_BRANCH}"
+          git commit -m "Bundle: add/update dynamic_cohorts + facetoface" || echo "nichts zu committen"
+          git push -f origin bundle
