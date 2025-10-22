@@ -1,0 +1,93 @@
+.f2fsessiongroup {
+    padding-bottom: 10px;
+}
+.f2fsession {
+    width: 100%;
+    display: flex;
+    border-bottom: 1px solid #ccc;
+    justify-content: space-between;
+}
+.f2fsession:last-child {
+    border-bottom: none;
+}
+.f2fsessiontime {
+    display: inline-block;
+    vertical-align: top;
+    padding-top: 5px;
+}
+.f2finprogress .f2fsessiontime {
+    width: 100%;
+}
+
+.f2fcustomfieldcolumn {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.f2fcustomfieldcolumn > div {
+    width: 100%;
+    padding-left: 2rem;
+}
+
+.f2foptions {
+    display: flex;
+    min-width: 60px;
+    max-width: 50%;
+    justify-content: end;
+    width: 100%;
+}
+
+.f2foptions:has(> :last-child:nth-child(2)) {
+    justify-content: space-between;
+}
+
+
+.f2fsessionlinks,
+.f2fsessionnotice {
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 14px;
+    display: block;
+    padding: 3px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.f2factivityname {
+    line-height: 1.5;
+}
+
+body.path-mod-facetoface table.f2fsession td.c0 {
+    font-weight: bold;
+    width: 12%;
+}
+body.path-mod-facetoface table.f2fsession {
+    width: 100%;
+}
+table.f2fsessionlist tr.highlight td.cell {
+    background-color: #afa;
+}
+a.f2fsessionlinks,
+td.f2fsessionnotice,
+span.f2fsessionnotice {
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 14px;
+}
+span.f2fonepointfive {
+    line-height: 1.5;
+}
+
+body#page-mod-facetoface-view div#page-content table.sessions {
+    width: 100%;
+}
+
+body#page-mod-facetoface-view div#page-content .formlocation {
+    float: right;
+    margin-bottom: 6px;
+}
+
+.path-mod-facetoface .table-responsive table.f2fbookingsuploadlist .c1 {
+    width: auto;
+}
