@@ -1,43 +1,59 @@
-name: Build Moodle Bundle (with plugins)
+name: Build Moodle Bundle (with plugins - 4.5)
 on:
   workflow_dispatch:
+  # optional automatisch (täglich 05:15 CH-Zeit Sommer / 04:15 Winter):
+  # schedule:
+  #   - cron: "15 3 * * *"
 
 permissions:
   contents: write
+
+env:
+  BASE_BRANCH: MOODLE_405_STABLE   # Moodle 4.5 Basis
+  BUNDLE_BRANCH: bundle
 
 jobs:
   bundle:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Moodle Fork
+      - name: Checkout Moodle Fork (4.5)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ env.BASE_BRANCH }}
 
-      - name: Add Plugin - tool_dynamic_cohorts
+      - name: Add Plugin - tool_dynamic_cohorts (4.5)
         uses: actions/checkout@v4
         with:
           repository: catalyst/moodle-tool_dynamic_cohorts
-          # Wähle den Branch passend zu deiner Moodle-Version:
-          # ref: MOODLE_404_STABLE
-          path: admin/tool/dynamic_cohorts
+          # Falls vorhanden, auf 4.5 pinnen:
+          ref: MOODLE_405_STABLE
+          path: ./admin/tool/dynamic_cohorts
       - name: De-git tool_dynamic_cohorts
-        run: rm -rf admin/tool/dynamic_cohorts/.git
+        run: rm -rf ./admin/tool/dynamic_cohorts/.git
 
       - name: Add Plugin - mod_facetoface
         uses: actions/checkout@v4
         with:
           repository: catalyst/moodle-mod_facetoface
-          # ggf. ref: master (falls kein main)
-          path: mod/facetoface
+          # Viele Plugins nutzen "master" oder "main". Falls ein 405-Branch existiert:
+          # ref: MOODLE_405_STABLE
+          # sonst eine stabile Branch/Tag wählen (z. B. master)
+          ref: master
+          path: ./mod/facetoface
       - name: De-git mod_facetoface
-        run: rm -rf mod/facetoface/.git
+        run: rm -rf ./mod/facetoface/.git
+
+      - name: Sanity-Check
+        run: |
+          test -f ./admin/tool/dynamic_cohorts/version.php || (echo "dynamic_cohorts leer" && exit 1)
+          test -f ./mod/facetoface/version.php || (echo "facetoface leer" && exit 1)
 
       - name: Commit & Push to bundle branch
         run: |
           git config user.name "github-actions"
           git config user.email "actions@users.noreply.github.com"
-          git checkout -B bundle
+          git checkout -B "${BUNDLE_BRANCH}"
           git add -A
-          git commit -m "Bundle: add/update dynamic_cohorts + facetoface" || echo "nichts zu committen"
-          git push -f origin bundle
+          git commit -m "Bundle (Moodle 4.5): dynamic_cohorts + facetoface" || echo "nichts zu committen"
+          git push -f origin "${BUNDLE_BRANCH}"
